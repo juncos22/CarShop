@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -22,6 +23,8 @@ public class CarController {
     private CarService service;
     @Autowired
     private BrandService brandService;
+
+    private final List<Car> carList = new ArrayList<>();
 
     @GetMapping
     public String vehiculos(Model model, HttpServletRequest request) {
@@ -131,11 +134,92 @@ public class CarController {
 
     @GetMapping("eliminar")
     public String eliminar(Model model, HttpServletRequest request) {
-        int id = Integer.parseInt(request.getParameter("id"));
+        Integer id = Integer.parseInt(request.getParameter("id"));
         if (service.deleteCar(id)) {
             model.addAttribute("message", "Vehiculo eliminado");
         }else {
             model.addAttribute("message", "No se pudo realizar la operacion");
+        }
+        return vehiculos(model, request);
+    }
+
+    @GetMapping("agregar")
+    public String agregar(Model model, HttpServletRequest request) {
+        User user = (User) request.getSession().getAttribute("usuario");
+        if (user != null) {
+            int carId = Integer.parseInt(request.getParameter("id"));
+            Car car = service.findCarById(carId);
+
+            if (car != null) {
+                model.addAttribute("vehiculo", car);
+            }
+            model.addAttribute("title", "Agregar vehiculo al carrito");
+            model.addAttribute("usuario", user);
+            return "carrito";
+        }else {
+            model.addAttribute("title", "Ingrese con su cuenta");
+            return "login";
+        }
+    }
+
+    @PostMapping("comprar")
+    public String comprar(Model model, HttpServletRequest request) {
+        User user = (User) request.getSession().getAttribute("usuario");
+
+        if (user != null) {
+            model.addAttribute("usuario", user);
+            int id = Integer.parseInt(request.getParameter("id"));
+            Car car = service.findCarById(id);
+            if (car != null) {
+                int stock = Integer.parseInt(request.getParameter("stock"));
+                double precio = car.getPrice();
+                double subtotal = precio * stock;
+                car.setPrice(subtotal);
+                car.setStock(stock);
+                carList.add(car);
+                request.getSession().setAttribute("carrito", carList);
+                model.addAttribute("message", "Vehiculo agregado al carrito");
+
+                return vehiculos(model, request);
+            }
+        }
+        model.addAttribute("title", "Ingrese con su cuenta");
+        return "login";
+    }
+
+    @GetMapping("carrito")
+    public String carrito(Model model, HttpServletRequest request) {
+        User user = (User) request.getSession().getAttribute("usuario");
+        if (user != null) {
+            model.addAttribute("usuario", user);
+            List<Car> cars = (List<Car>) request.getSession().getAttribute("carrito");
+            if (cars != null && cars.size() > 0) {
+                double total = 0;
+                for (Car c : cars) {
+                    total += c.getPrice();
+                }
+                model.addAttribute("carrito", cars);
+                model.addAttribute("total", total);
+            }else {
+                model.addAttribute("message", "No agregaste articulos al carrito");
+            }
+            model.addAttribute("title", "Mi Carrito");
+            return "miCarrito";
+        }
+        model.addAttribute("title", "Ingrese con su cuenta");
+        return "login";
+    }
+
+    @GetMapping("realizarCompra")
+    public String realizarCompra(Model model, HttpServletRequest request) {
+        User user = (User) request.getSession().getAttribute("usuario");
+        if (user != null) {
+            request.getSession().removeAttribute("carrito");
+            carList.clear();
+            model.addAttribute("message", "Compra realizada exitosamente");
+        }else {
+            model.addAttribute("title", "Ingrese con su cuenta");
+            return "login";
         }
         return vehiculos(model, request);
     }

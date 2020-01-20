@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="master/layout :: head">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+<div th:replace="master/layout :: navbar"></div>
+
+<div class="container mt-5">
+    <h3 class="text-center">Articulos Agregados al Carrito</h3>
+    <div th:if="${message}">
+        <div class="alert alert-success" role="alert">
+            <h4 class="alert-heading" th:text="${message}"></h4>
+            <p>Parece que no agregaste ningun item al carrito</p>
+            <hr>
+            <p class="mb-0">
+                Puedes empezar a agregar items desde
+                <a class="btn btn-secondary" th:href="@{/vehiculos}">AQUI</a>
+            </p>
+        </div>
+    </div>
+
+    <div class="list-group" th:if="${carrito} != null">
+        <div th:each="item : ${carrito}">
+            <div class="list-group-item list-group-item-action">
+                <div class="d-flex w-100 justify-content-between">
+                    Marca: <h5 class="mb-1" th:text="${item.getBrand().getName()}"></h5>
+                    Subtotal: $<small th:text="${item.getPrice()}"></small>
+                </div>
+                Modelo: <p class="mb-1" th:text="${item.getModel()}"></p>
+                Cantidad Elegida: <small th:text="${item.getStock()}"></small>
+                <img th:src="${item.getPhoto()}" alt="foto" class="img-thumbnail" width="200" height="200">
+            </div>
+            <br>
+        </div>
+        <br>
+        <h3>Total: $ <span class="badge badge-pill badge-info" th:text="${total}"></span></h3>
+        <br><br>
+        <a th:href="@{/vehiculos/realizarCompra}" class="btn btn-success btn-block">Realizar Compra</a>
+    </div>
+</div>
+
+<div th:replace="master/layout :: footer"></div>
+</body>
+</html>

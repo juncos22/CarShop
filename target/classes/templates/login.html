@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="master/layout :: head">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+<div th:replace="master/layout :: navbar"></div>
+
+<div class="container mt-5">
+    <h3 class="text-center">Iniciar Sesion</h3>
+    <form th:action="@{/usuario/login}" method="post" style="width: 500px; margin: auto;">
+        <div class="form-group">
+            <input class="form-control" type="text" name="nombre" placeholder="Nombre de usuario" required>
+        </div>
+        <div class="form-group">
+            <input class="form-control" type="password" name="contrasenia" placeholder="Contraseña" required>
+        </div>
+        <div class="form-group">
+            <button class="btn btn-primary btn-block" type="submit">Ingresar</button>
+        </div>
+    </form>
+    <div class="text-center">
+        <a th:href="@{/usuario/signup}" class="text-info">Registrarse</a>
+    </div>
+
+    <div th:if="${message}" class="alert alert-info alert-dismissible fade show" role="alert">
+        <strong>INFO</strong>
+        <p th:text="${message}"></p>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+</div>
+<div th:replace="master/layout :: footer"></div>
+</body>
+</html>

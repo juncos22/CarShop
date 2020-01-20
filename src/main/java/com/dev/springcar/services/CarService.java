@@ -3,6 +3,7 @@ package com.dev.springcar.services;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -52,11 +53,12 @@ public class CarService {
 		return false;
 	}
 	
-	public boolean deleteCar(int id) {
-		Car c =	repo.findById(id).orElse(null);
+	public boolean deleteCar(Integer id) {
+		Optional<Car> c = repo.findById(id);
 		// TODO: ARREGLAR METODO
-		if (c != null) {
-			repo.delete(c);
+		if (c.isPresent()) {
+			Car car = c.get();
+			repo.delete(car);
 			return true;
 		}
 		return false;

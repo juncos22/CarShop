@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="master/layout :: head">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+<div th:replace="master/layout :: navbar"></div>
+
+<div class="container mt-5">
+    <h3 class="text-center">Detalles del Vehiculo</h3>
+    <form th:action="@{/vehiculos/actualizar}" method="post">
+        <div class="jumbotron">
+            <div class="row">
+                <div class="col-md-4">
+                    <input type="hidden" name="id" th:value="${vehiculo.getId()}">
+                    <div class="form-group">
+                        <label for="marca">Marca</label>
+                        <select class="form-control" name="marca" id="marca" required>
+                            <div th:each="m : ${marcas}">
+                                <option th:value="${m.getId()}" th:text="${m.getName()}"></option>
+                            </div>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="modelo">Modelo</label>
+                        <input class="form-control" name="modelo" id="modelo" type="text"
+                               th:value="${vehiculo.getModel()}" required>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="precio">Precio</label>
+                        <input class="form-control" min="1" name="precio" id="precio" type="number"
+                               th:value="${vehiculo.getPrice()}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="stock">Stock</label>
+                        <input class="form-control" min="1" name="stock" id="stock" type="number"
+                               th:value="${vehiculo.getStock()}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="foto">Foto</label>
+                        <input class="form-control" name="foto" id="foto" type="text"
+                               th:value="${vehiculo.getPhoto()}" required>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <img th:src="${vehiculo.getPhoto()}" alt="foto" class="img-fluid">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <button type="submit" class="btn btn-secondary btn-block">Guardar Cambios del Vehiculo</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div th:replace="master/layout :: footer"></div>
+</body>
+</html>
